@@ -1,119 +1,64 @@
-import os
-import sys
-import time
-import platform
-import click 
-from pyfiglet import Figlet
+"""
+Kevin McCallister CLI Toolkit — Entry Point
+
+A modular developer productivity shell.
+"""
+
 from colorama import Fore, Style, init
-from click.exceptions import UsageError
+from pyfiglet import Figlet
+
+from context import ShellContext
+from engine import CommandEngine
+from registry import register_all_commands
+from shell import Shell
+from services.history import HistoryService
+from services.aliases import AliasService
+from services.config import ConfigService
+from services.logger import LoggerService
 
 # Initialize colorama
 init(autoreset=True)
 
-# Create Figlet object for ASCII art
-figlet = Figlet(font='slant')
 
-ascii_art_a = figlet.renderText(f' --- Kevin Mccallister CLi Toolkit ---')
-click.echo(Fore.WHITE + Style.BRIGHT + ascii_art_a)
-
-rainbow_colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
-
-@click.group()
-def cli():
-    """Kevin Mccallister CLI Toolkit"""
-    pass
+def display_banner() -> None:
+    """Display the startup banner."""
+    figlet = Figlet(font="slant")
+    banner = figlet.renderText("Kevin CLI")
+    print(Fore.CYAN + Style.BRIGHT + banner)
+    print(Fore.WHITE + Style.DIM + "  Kevin McCallister CLI Toolkit — Developer Productivity Shell")
+    print(Fore.WHITE + Style.DIM + "  Type 'help' for available commands, 'exit' to quit.\n")
 
 
-@click.command()
-def hello():
-    ascii_art_hello = figlet.renderText(f'Hello World')
-    for i, line in enumerate(ascii_art_hello.split('\n')):
-        color = rainbow_colors[i % len(rainbow_colors)]
-        click.echo(color + line)
+def main() -> None:
+    """Bootstrap and start the shell."""
+    # Display banner
+    display_banner()
 
-@click.command()
-def system_infos(): 
-    """ Display the system information"""
-    click.echo(Fore.BLUE + 'System Information:')
-    click.echo(Fore.CYAN + f'Current Time: {time.ctime()}')
-    click.echo(Fore.CYAN + f'OS: {platform.system()}')
-    click.echo(Fore.CYAN + f'OS Version: {platform.version()}')
-    click.echo(Fore.CYAN + f'Processor: {platform.processor()}')
+    # Create services
+    history_svc = HistoryService()
+    alias_svc = AliasService()
+    config_svc = ConfigService()
+    logger_svc = LoggerService()
 
-@click.command()
-@click.option('--count', default=1, help='Number of greetings.')
-@click.option('--name', prompt='Please enter Your name', help='The person to greet.')
-def greet(count, name):
-    """Simple program that greets NAME for a total of COUNT times."""
-    for _ in range(count):
-        ascii_art = figlet.renderText(f'Hello, {name} !')
-        click.echo(Fore.GREEN + Style.BRIGHT  + ascii_art)
+    # Create context
+    ctx = ShellContext()
 
-@click.command()
-@click.option('--operation', type=click.Choice(['+','-','*','/','%'], case_sensitive=False), 
-prompt='Operation (+, -, *, /, %)', help='Arithmetic operation')
-@click.option('--x', type=float, prompt='First operand', help='The first operand')
-@click.option('--y', type=float, prompt='Second operand', help='The second operand')
-def calculator(operation, x , y):
-    """Simple calculator that performs basic arithmetic operations."""
-    if operation == '+':
-        result = x + y
-    elif operation == '-':
-        result = x - y
-    elif operation == '*':
-        result = x * y
-    elif operation == '/':
-        if y != 0:
-            result = x / y
-        else:
-            click.echo(Fore.RED + 'Error: Division by zero.')
-            return
-    elif operation == '%':
-        if y != 0:
-            result = x % y
-        else:
-            click.echo(Fore.RED + 'Error: Division by zero.')
-            return
-    click.echo(Fore.BLUE + Style.BRIGHT + f'Result: {result}')
+    # Sync persisted aliases into context
+    alias_svc.sync_to_context(ctx.aliases)
 
-# print(sys.argv)
-@click.command()
-def help():
-    """Show help for all commands"""
-    help_text = """
-    Kevin Mccallister CLI Toolkit
+    # Apply config overrides
+    prompt_tmpl = config_svc.get("prompt")
+    if prompt_tmpl:
+        ctx.prompt_template = prompt_tmpl
 
-    Available Commands:
-    - hello_world: Display 'Hello World'.
-    - system_infos: Displays current time, operating system, OS version, and processor information.
-    - greet: Simple program that greets NAME for a total of COUNT times.
-    - calculator: Simple calculator that performs basic arithmetic operations.
-    """
-    ascii_art_help = figlet.renderText('Help')
-    click.echo(Fore.YELLOW + Style.BRIGHT + ascii_art_help)
-    click.echo(Fore.CYAN + help_text)
+    # Create engine and register commands
+    engine = CommandEngine()
+    register_all_commands(engine, history_svc, alias_svc, config_svc)
 
-# All the commands to the cli group
-cli.add_command(hello)
-cli.add_command(system_infos)
-cli.add_command(greet)
-cli.add_command(calculator)
-cli.add_command(help)
+    # Start the interactive shell
+    shell = Shell(engine, ctx, history_svc, alias_svc, logger_svc)
+    shell.run()
 
-# Interactive REPL loop
-def repl():
-    is_running = True
-    while is_running:
-        command = input(Fore.CYAN + 'Enter command (type "exit" to quit): ')
-        if command.lower() == 'exit':
-            is_running = False
-            continue
-        try:
-            cli.main(args=command.split(), standalone_mode=False)
-        except UsageError as e:
-            click.echo(Fore.RED + f'Error: {e}')
-        except SystemExit as e:
-            pass
 
-if __name__ == '__main__':
-    repl()
+if __name__ == "__main__":
+    main()
