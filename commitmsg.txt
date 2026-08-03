@@ -1,0 +1,5 @@
+﻿Fix Tailwind PostCSS config and add @tailwindcss/postcss adapter
+
+This fixes build errors where @tailwind rules were not processed.
+
+Co-authored-by: Copilot App <223556219+Copilot@users.noreply.github.com>
