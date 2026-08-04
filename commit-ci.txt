@@ -1,0 +1,5 @@
+﻿Fix Pylint CI: add requirements.txt and install dependencies in workflow
+
+Add requirements.txt with project dependencies (colorama, prompt_toolkit) and update .github/workflows/pylint.yml to install them before running Pylint. This fixes pre-existing CI failures due to missing imports.
+
+Co-authored-by: Copilot App <223556219+Copilot@users.noreply.github.com>

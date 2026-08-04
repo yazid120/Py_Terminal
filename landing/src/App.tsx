@@ -15,6 +15,8 @@ const CLIDemo = () => {
     ];
 
     let currentIndex = 0;
+    let timeoutId: number | null = null;
+
     const interval = setInterval(() => {
       if (currentIndex < commands.length) {
         setLines((prev) => [
@@ -24,14 +26,17 @@ const CLIDemo = () => {
         currentIndex++;
       } else {
         clearInterval(interval);
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           setLines([]);
           currentIndex = 0;
         }, 4000);
       }
     }, 600);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
