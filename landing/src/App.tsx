@@ -15,27 +15,36 @@ const CLIDemo = () => {
     ];
 
     let currentIndex = 0;
-    let timeoutId: number | null = null;
+    const timers: (number | ReturnType<typeof setInterval>)[] = [];
 
-    const interval = setInterval(() => {
-      if (currentIndex < commands.length) {
-        setLines((prev) => [
-          ...prev,
-          commands[currentIndex].prompt + commands[currentIndex].text,
-        ]);
-        currentIndex++;
-      } else {
-        clearInterval(interval);
-        timeoutId = setTimeout(() => {
-          setLines([]);
-          currentIndex = 0;
-        }, 4000);
-      }
-    }, 600);
+    const startAnimation = () => {
+      const interval = setInterval(() => {
+        if (currentIndex < commands.length) {
+          setLines((prev) => [
+            ...prev,
+            commands[currentIndex].prompt + commands[currentIndex].text,
+          ]);
+          currentIndex++;
+        } else {
+          clearInterval(interval);
+          const timeoutId = setTimeout(() => {
+            setLines([]);
+            currentIndex = 0;
+            startAnimation();
+          }, 4000);
+          timers.push(timeoutId);
+        }
+      }, 600);
+      timers.push(interval);
+    };
+
+    startAnimation();
 
     return () => {
-      clearInterval(interval);
-      if (timeoutId) clearTimeout(timeoutId);
+      timers.forEach((timer) => {
+        if (typeof timer === 'number') clearTimeout(timer);
+        else clearInterval(timer);
+      });
     };
   }, []);
 
