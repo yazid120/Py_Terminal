@@ -20,11 +20,18 @@ const CLIDemo = () => {
     const startAnimation = () => {
       const interval = setInterval(() => {
         if (currentIndex < commands.length) {
+          const command = commands[currentIndex];
+
+          if (!command) {
+            clearInterval(interval);
+            return;
+          }
+
+          currentIndex++;
           setLines((prev) => [
             ...prev,
-            commands[currentIndex].prompt + commands[currentIndex].text,
+            command.prompt + command.text,
           ]);
-          currentIndex++;
         } else {
           clearInterval(interval);
           const timeoutId = setTimeout(() => {
