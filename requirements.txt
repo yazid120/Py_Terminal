@@ -1,2 +1,4 @@
 colorama
 prompt_toolkit
+psutil
+pyfiglet
