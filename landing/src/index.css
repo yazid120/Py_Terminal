@@ -1,5 +1,55 @@
 ﻿@import "tailwindcss";
 
-html,body,#root {
-  height: 100%;
+:root {
+  --page: #f6f0e6;
+  --ink: #211c17;
+  --muted: #645b50;
+  --accent: #de6930;
+  --accent-2: #15756d;
+  --accent-3: #d8a14e;
+  --panel: rgba(255, 250, 242, 0.92);
+  --panel-line: rgba(33, 28, 23, 0.08);
+  --font-sans: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  background: var(--page);
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 196, 149, 0.22), transparent 30%),
+    radial-gradient(circle at top right, rgba(172, 230, 217, 0.20), transparent 26%),
+    linear-gradient(180deg, #fbf6ee 0%, var(--page) 42%, #f4ece1 100%);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgba(222, 105, 48, 0.18);
+  color: var(--ink);
+}
+
+.glass-panel {
+  border: 1px solid var(--panel-line);
+  background: var(--panel);
+  box-shadow: 0 14px 40px rgba(53, 41, 24, 0.06);
 }
