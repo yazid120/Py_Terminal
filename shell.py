@@ -100,6 +100,7 @@ class Shell:
 
     def run(self) -> None:
         """Main REPL loop."""
+        correction = ""
         while self.ctx.running:
             try:
                 prompt = self._build_prompt()
@@ -108,7 +109,9 @@ class Shell:
                 raw_input = self.session.prompt(
                     prompt,
                     completer=completer,
+                    default=correction,
                 )
+                correction = ""
 
                 if not raw_input or not raw_input.strip():
                     continue
@@ -129,6 +132,9 @@ class Shell:
 
             except CommandNotFoundError as e:
                 print(Fore.RED + f"  {e}")
+                if e.suggestions:
+                    correction = e.corrected_command(e.suggestions[0])
+                    print(Fore.YELLOW + "  Correction filled in below. Press Enter to run, or edit it.")
             except KeyboardInterrupt:
                 # Ctrl+C — cancel current line
                 print()

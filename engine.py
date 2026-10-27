@@ -8,6 +8,7 @@ and dispatches to command handlers.  Zero Click dependency.
 from __future__ import annotations
 
 import shlex
+from difflib import get_close_matches
 from dataclasses import dataclass, field
 from typing import Any, Callable, Optional
 
@@ -63,6 +64,13 @@ class CommandEngine:
         """Return sorted list of command names (for autocomplete)."""
         return sorted(self._commands.keys())
 
+    def suggest_commands(
+        self, name: str, ctx: ShellContext, extra_names: tuple[str, ...] = (),
+    ) -> list[str]:
+        """Find likely command typos without executing a correction."""
+        candidates = sorted(set(self._commands) | set(ctx.aliases) | set(extra_names))
+        return get_close_matches(name, candidates, n=3, cutoff=0.65)
+
     # ---- execution ----
 
     def execute(self, raw_input: str, ctx: ShellContext) -> Optional[str]:
@@ -106,7 +114,7 @@ class CommandEngine:
         # 5. Look up command
         command = self.get_command(cmd_name)
         if command is None:
-            raise CommandNotFoundError(cmd_name)
+            raise CommandNotFoundError(cmd_name, self.suggest_commands(cmd_name, ctx), args)
 
         # 6. Execute handler
         return command.handler(ctx, args)
@@ -139,6 +147,18 @@ class CommandEngine:
 class CommandNotFoundError(Exception):
     """Raised when a command name is not registered."""
 
-    def __init__(self, name: str) -> None:
+    def __init__(
+        self, name: str, suggestions: Optional[list[str]] = None,
+        command_args: Optional[list[str]] = None,
+    ) -> None:
         self.name = name
-        super().__init__(f"Command not found: {name}")
+        self.suggestions = suggestions or []
+        self.command_args = command_args or []
+        message = f"Command not found: {name}"
+        if self.suggestions:
+            message += f". Did you mean '{self.suggestions[0]}'?"
+        super().__init__(message)
+
+    def corrected_command(self, name: str) -> str:
+        """Keep argument boundaries when offering a corrected command."""
+        return shlex.join([name, *self.command_args])
