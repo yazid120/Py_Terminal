@@ -11,6 +11,7 @@ Handles:
 
 from __future__ import annotations
 
+import sys
 from typing import Optional
 
 from colorama import Fore, Style
@@ -58,17 +59,19 @@ class Shell:
         self.alias_svc = alias_svc
         self.logger_svc = logger_svc
 
-        # Create prompt_toolkit session
-        from pathlib import Path
-        pt_history_path = Path.home() / ".kevin-cli" / "pt_history"
-        pt_history_path.parent.mkdir(parents=True, exist_ok=True)
+        self.session: Optional[PromptSession] = None
+        # Windows console APIs cannot operate on redirected streams.
+        if sys.stdin.isatty() and sys.stdout.isatty():
+            from pathlib import Path
+            pt_history_path = Path.home() / ".kevin-cli" / "pt_history"
+            pt_history_path.parent.mkdir(parents=True, exist_ok=True)
 
-        self.session: PromptSession = PromptSession(
-            history=FileHistory(str(pt_history_path)),
-            auto_suggest=AutoSuggestFromHistory(),
-            style=PT_STYLE,
-            enable_history_search=True,
-        )
+            self.session = PromptSession(
+                history=FileHistory(str(pt_history_path)),
+                auto_suggest=AutoSuggestFromHistory(),
+                style=PT_STYLE,
+                enable_history_search=True,
+            )
 
     def _build_prompt(self) -> HTML:
         """Build a rich HTML prompt for prompt_toolkit."""
@@ -103,14 +106,14 @@ class Shell:
         correction = ""
         while self.ctx.running:
             try:
-                prompt = self._build_prompt()
-                completer = self._get_completer()
-
-                raw_input = self.session.prompt(
-                    prompt,
-                    completer=completer,
-                    default=correction,
-                )
+                if self.session is None:
+                    raw_input = input()
+                else:
+                    raw_input = self.session.prompt(
+                        self._build_prompt(),
+                        completer=self._get_completer(),
+                        default=correction,
+                    )
                 correction = ""
 
                 if not raw_input or not raw_input.strip():
@@ -132,7 +135,7 @@ class Shell:
 
             except CommandNotFoundError as e:
                 print(Fore.RED + f"  {e}")
-                if e.suggestions:
+                if e.suggestions and self.session is not None:
                     correction = e.corrected_command(e.suggestions[0])
                     print(Fore.YELLOW + "  Correction filled in below. Press Enter to run, or edit it.")
             except KeyboardInterrupt:

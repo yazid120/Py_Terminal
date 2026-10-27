@@ -17,6 +17,10 @@ Unknown commands suggest close matches. On desktop, the best correction is
 filled into the next prompt: press Enter to run it, or edit/clear it. Corrections
 are never executed automatically.
 
+When stdin or stdout is redirected (including CI and piped commands), the CLI
+reads plain command lines without initializing a console UI. Interactive
+terminals retain the rich prompt, completion, and editable corrections.
+
 ## Build the Windows executable
 
 Use 64-bit Python on Windows:
