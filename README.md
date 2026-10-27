@@ -57,3 +57,8 @@ python -m unittest discover -s tests -v
 The Windows download smoke test runs the packaged executable if it exists.
 The build workflow packages and tests the executable and uploads the complete
 website as a GitHub Actions artifact.
+
+The Pylint workflow checks Python 3.9 and 3.10 on Ubuntu 24.04, pinned so
+`ubuntu-latest` runner upgrades do not remove access to older Python builds.
+It runs on pushes and pull requests, and can be started manually. Matrix jobs
+report independently; one failing version does not cancel the other.
