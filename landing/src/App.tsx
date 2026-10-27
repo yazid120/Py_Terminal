@@ -1,24 +1,12 @@
-﻿type DemoLine = {
-  prompt: string;
-  text: string;
-  tone: "command" | "output" | "status";
-};
+﻿import CLIDemo from "./CLIDemo";
 
-const terminalFrames: DemoLine[] = [
-  { prompt: "py-terminal> ", text: "launch sandbox --python 3.11", tone: "command" },
-  { prompt: "", text: "runtime: pyodide warm in 240ms", tone: "status" },
-  { prompt: "py-terminal> ", text: "bind worker --transport websocket", tone: "command" },
-  { prompt: "", text: "remote exec channel attached to worker-eu-01", tone: "output" },
-  { prompt: "py-terminal> ", text: "run demo.py --stream", tone: "command" },
-  { prompt: "", text: "stdout: build completed, preview URL generated", tone: "output" },
-  { prompt: "", text: "status: replay, history, and logs ready", tone: "status" },
-];
+const downloadUrl = `${import.meta.env.BASE_URL}downloads/kevin-cli-windows.exe`;
 
 const stats = [
-  { value: "240ms", label: "runtime warm start" },
-  { value: "3 modes", label: "browser, hybrid, remote" },
-  { value: "1 API", label: "commands, history, artifacts" },
-  { value: "0 plugins locked", label: "bring your own commands" },
+  { value: "Python", label: "real browser execution" },
+  { value: "2 modes", label: "browser and desktop" },
+  { value: "1 engine", label: "shared CLI commands" },
+  { value: "Windows", label: "standalone x64 download" },
 ];
 
 const featureCards = [
@@ -26,13 +14,13 @@ const featureCards = [
     eyebrow: "Browser runtime",
     title: "Prototype directly in the page",
     copy:
-      "Run Python snippets, sandbox flows, and interactive command palettes without waiting for backend infrastructure.",
+      "Try the existing Python CLI commands in a browser playground, with no backend or local installation.",
   },
   {
-    eyebrow: "Remote execution",
-    title: "Switch to workers when the demo becomes real",
+    eyebrow: "Desktop execution",
+    title: "Download the full CLI for Windows",
     copy:
-      "Route the same interface to WebSocket or REST backends when you need private filesystems, queues, or scale.",
+      "Run the standalone executable for system information, network tools, and access to your real filesystem. No Python installation needed.",
   },
   {
     eyebrow: "Command surface",
@@ -46,17 +34,17 @@ const workflowSteps = [
   {
     id: "01",
     title: "Define the shell contract",
-    copy: "Map commands, prompts, and artifacts once so the experience stays consistent across browser and server runtimes.",
+    copy: "The browser reuses the desktop command engine and compatible command modules, rather than simulating their output.",
   },
   {
     id: "02",
-    title: "Stream output in real time",
-    copy: "Present logs, results, progress, and failures as readable terminal events rather than forcing users through hidden jobs.",
+    title: "Try commands in the playground",
+    copy: "Run calculations, format JSON, generate UUIDs, and explore temporary files. Output appears when each command completes.",
   },
   {
     id: "03",
-    title: "Persist history and handoff",
-    copy: "Capture sessions for retries, support, and collaboration so every command run becomes reusable product context.",
+    title: "Take the CLI to your desktop",
+    copy: "Download the Windows executable for the complete toolkit. Browser state is temporary; the desktop CLI saves its own history and settings.",
   },
 ];
 
@@ -74,45 +62,6 @@ const audienceCards = [
     copy: "Wrap complex backend actions in a terminal-shaped interface that feels fast, legible, and operator-ready.",
   },
 ];
-
-function CLIDemo() {
-  return (
-    <div className="rounded-[28px] border border-[rgba(255,255,255,0.12)] bg-[#14110f] p-5 text-[#f4efe7] shadow-[0_32px_80px_rgba(20,17,15,0.24)]">
-      <div className="mb-4 flex items-center justify-between border-b border-[rgba(255,255,255,0.1)] pb-3">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-[#ff8b5e]" />
-          <span className="h-3 w-3 rounded-full bg-[#f5bf4f]" />
-          <span className="h-3 w-3 rounded-full bg-[#47b881]" />
-        </div>
-        <span className="rounded-full border border-[rgba(255,255,255,0.12)] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-[#d8cfbf]">
-          Live preview
-        </span>
-      </div>
-
-      <div className="space-y-2 font-mono text-sm leading-7 sm:text-[15px]">
-        {terminalFrames.map((line, index) => (
-          <div key={`${line.prompt}${line.text}-${index}`} className="flex gap-2">
-            <span className="text-[#ffb084]">{line.prompt}</span>
-            <span
-              className={
-                line.tone === "command"
-                  ? "text-[#fff8ea]"
-                  : line.tone === "status"
-                    ? "text-[#7ce5c2]"
-                    : "text-[#c8c0b2]"
-              }
-            >
-              {line.text}
-            </span>
-          </div>
-        ))}
-        <div className="pt-2 text-xs uppercase tracking-[0.22em] text-[#7ce5c2]">
-          session ready
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function LogoMark() {
   return (
@@ -158,7 +107,7 @@ export default function App() {
               Workflow
             </a>
             <a className="transition hover:text-[var(--ink)]" href="#start">
-              Start
+              Download
             </a>
             <a
               className="rounded-full border border-[rgba(29,28,25,0.08)] bg-[var(--ink)] px-5 py-2 text-[13px] font-semibold text-[var(--page)] transition hover:bg-[#2b241d]"
@@ -185,30 +134,30 @@ export default function App() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] sm:text-xl">
-              Py Terminal gives you a clean command surface for demos, docs, sandboxes, and remote execution.
-              Start in the browser, move to workers when needed, and keep the experience consistent all the way through.
+              Try Kevin CLI right here in your browser, or download the standalone Windows app for the full
+              developer toolkit. The same Python engine powers both experiences.
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <a
                 className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-4 text-sm font-semibold text-white transition hover:bg-[#d45d21]"
-                href="#start"
+                href="#demo"
               >
-                Build your shell
+                Try it in your browser
               </a>
               <a
                 className="inline-flex items-center justify-center rounded-full border border-[rgba(29,28,25,0.1)] bg-[rgba(255,250,242,0.72)] px-7 py-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-[rgba(255,255,255,0.92)]"
-                href="#features"
+                href="#start"
               >
-                Explore capabilities
+                Download for Windows
               </a>
             </div>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               {[
-                "Pyodide-ready browser runtime",
-                "Remote workers via REST or WebSockets",
-                "Session history and artifacts built in",
+                "Real Python via Pyodide",
+                "Standalone Windows executable",
+                "Temporary browser playground",
               ].map((item) => (
                 <div
                   key={item}
@@ -225,14 +174,14 @@ export default function App() {
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">
-                    Control plane
+                    Interactive prototype
                   </p>
                   <p className="mt-1 text-xl font-semibold text-[var(--ink)]">
-                    One interface, multiple execution modes
+                    Your CLI, running in the browser
                   </p>
                 </div>
                 <div className="rounded-full border border-[rgba(29,28,25,0.08)] bg-white/50 px-3 py-1 text-xs font-medium text-[var(--muted)]">
-                  synced
+                  Python / WebAssembly
                 </div>
               </div>
 
@@ -241,15 +190,15 @@ export default function App() {
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-white/60 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Execution</p>
-                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Browser and remote</p>
+                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Browser and desktop</p>
                 </div>
                 <div className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-white/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Artifacts</p>
-                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Logs, results, downloads</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Filesystem</p>
+                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Temporary browser files</p>
                 </div>
                 <div className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-white/60 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Command UX</p>
-                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">History, prompts, replay</p>
+                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">History, aliases, variables</p>
                 </div>
               </div>
             </div>
@@ -374,32 +323,43 @@ export default function App() {
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">
-                  Ready to ship
+                  Desktop download
                 </p>
                 <h2
                   className="mt-3 max-w-2xl text-4xl leading-tight sm:text-5xl"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
-                  Replace static code samples with a terminal experience people can actually use.
+                  Keep the full toolkit on your Windows desktop.
                 </h2>
                 <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-                  Start with the browser runtime for onboarding and demos, then connect the same shell to your backend when the workflow needs real infrastructure.
+                  Download Kevin CLI for Windows x64, then run the executable from PowerShell or Windows Terminal.
+                  No Python installation required. This prototype build is unsigned, so Windows may display a SmartScreen warning.
+                  Managed devices may block unsigned apps. Only run downloads you trust.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:min-w-[220px]">
                 <a
                   className="inline-flex items-center justify-center rounded-full bg-[var(--ink)] px-7 py-4 text-sm font-semibold text-[var(--page)] transition hover:bg-[#2b241d]"
-                  href="#demo"
+                  href={__CLI_DOWNLOAD_AVAILABLE__ ? downloadUrl : undefined}
+                  download={__CLI_DOWNLOAD_AVAILABLE__ ? "kevin-cli-windows.exe" : undefined}
+                  aria-disabled={!__CLI_DOWNLOAD_AVAILABLE__}
                 >
-                  Preview the shell
+                  {__CLI_DOWNLOAD_AVAILABLE__ ? "Download Windows CLI (.exe)" : "Windows build not available"}
                 </a>
                 <a
                   className="inline-flex items-center justify-center rounded-full border border-[rgba(29,28,25,0.12)] bg-white/70 px-7 py-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-white"
-                  href="#workflow"
+                  href="#demo"
                 >
-                  Review the workflow
+                  Try the browser demo
                 </a>
+                {__CLI_DOWNLOAD_AVAILABLE__ ? (
+                  <a className="text-center text-sm underline" href={`${import.meta.env.BASE_URL}downloads/manifest.json`}>
+                    Download size and SHA-256 checksum
+                  </a>
+                ) : (
+                  <p className="text-sm text-[var(--muted)]">Build the Windows executable first; see the project README.</p>
+                )}
               </div>
             </div>
           </div>
@@ -417,7 +377,7 @@ export default function App() {
               Workflow
             </a>
             <a className="transition hover:text-[var(--ink)]" href="#start">
-              Contact
+              Download
             </a>
           </div>
         </div>

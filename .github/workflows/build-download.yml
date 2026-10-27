@@ -1,0 +1,37 @@
+name: Build Windows CLI and web prototype
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: landing/package-lock.json
+      - run: python -m pip install -r requirements-build.txt
+      - run: python scripts\build_windows.py
+      - run: python -m unittest discover -s tests -v
+      - run: npm ci
+        working-directory: landing
+      - run: npm run build
+        working-directory: landing
+      - run: npm run lint
+        working-directory: landing
+      - uses: actions/upload-artifact@v4
+        with:
+          name: py-terminal-website-and-windows-cli
+          path: landing/dist
