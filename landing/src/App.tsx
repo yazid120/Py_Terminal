@@ -1,6 +1,7 @@
 ﻿import CLIDemo from "./CLIDemo";
 
 const downloadUrl = `${import.meta.env.BASE_URL}downloads/kevin-cli-windows.exe`;
+const __CLI_DOWNLOAD_AVAILABLE__ = false; // Set to true when build is available
 
 const stats = [
   { value: "Python", label: "real browser execution" },
@@ -65,13 +66,30 @@ const audienceCards = [
 
 function LogoMark() {
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(29,28,25,0.08)] bg-[rgba(255,250,242,0.82)] shadow-[0_10px_30px_rgba(45,35,22,0.08)]">
-      <div className="grid gap-1.5">
-        <span className="block h-1.5 w-6 rounded-full bg-[var(--accent)]" />
-        <span className="block h-1.5 w-4 rounded-full bg-[var(--accent-2)]" />
-        <span className="block h-1.5 w-5 rounded-full bg-[var(--accent-3)]" />
-      </div>
-    </div>
+    <svg className="h-12 w-12" viewBox="0 0 48 48" fill="none">
+      {/* Terminal icon with neon aesthetic */}
+      <rect x="8" y="8" width="32" height="32" rx="4" stroke="var(--accent)" strokeWidth="2" />
+      {/* Cursor line */}
+      <rect x="10" y="14" width="16" height="2" rx="1" fill="var(--accent)" />
+      {/* Code brackets */}
+      <path d="M 14 20 L 12 24 L 14 28" stroke="var(--accent-secondary)" strokeWidth="2" strokeLinecap="round" />
+      <path d="M 34 20 L 36 24 L 34 28" stroke="var(--accent-secondary)" strokeWidth="2" strokeLinecap="round" />
+      {/* Dot indicators */}
+      <circle cx="18" cy="32" r="1.5" fill="var(--accent)" opacity="0.7" />
+      <circle cx="24" cy="32" r="1.5" fill="var(--accent-secondary)" opacity="0.7" />
+      <circle cx="30" cy="32" r="1.5" fill="var(--accent-tertiary)" opacity="0.7" />
+      {/* Glow effect */}
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <rect x="8" y="8" width="32" height="32" rx="4" stroke="var(--accent)" strokeWidth="1" opacity="0.3" filter="url(#glow)" />
+    </svg>
   );
 }
 
@@ -84,36 +102,35 @@ export default function App() {
 
       <header className="relative mx-auto max-w-7xl px-6 py-6 sm:px-8 lg:px-10">
         <nav className="glass-panel flex flex-col gap-5 rounded-[28px] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <LogoMark />
             <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">
-                Python UX toolkit
+              <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
+                {"> Cloud Python"}
               </p>
               <p
-                className="text-2xl leading-none text-[var(--ink)]"
-                style={{ fontFamily: "var(--font-display)" }}
+                className="text-2xl leading-none font-bold text-[var(--accent)] font-mono"
               >
-                Py Terminal
+                PyShell
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--muted)] sm:justify-end">
-            <a className="transition hover:text-[var(--ink)]" href="#features">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--ink-secondary)] sm:justify-end">
+            <a className="transition hover:text-[var(--accent)]" href="#features">
               Features
             </a>
-            <a className="transition hover:text-[var(--ink)]" href="#workflow">
+            <a className="transition hover:text-[var(--accent)]" href="#workflow">
               Workflow
             </a>
-            <a className="transition hover:text-[var(--ink)]" href="#start">
+            <a className="transition hover:text-[var(--accent)]" href="#start">
               Download
             </a>
             <a
-              className="rounded-full border border-[rgba(29,28,25,0.08)] bg-[var(--ink)] px-5 py-2 text-[13px] font-semibold text-[var(--page)] transition hover:bg-[#2b241d]"
+              className="rounded-lg border border-[var(--accent)] bg-[rgba(0,255,136,0.1)] px-5 py-2 text-xs font-semibold text-[var(--accent)] transition hover:bg-[rgba(0,255,136,0.2)] hover:shadow-[var(--shadow-glow)]"
               href="#demo"
             >
-              Open demo
+              Open Terminal
             </a>
           </div>
         </nav>
@@ -122,46 +139,45 @@ export default function App() {
       <main className="relative mx-auto max-w-7xl px-6 pb-16 sm:px-8 lg:px-10">
         <section className="grid gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-16">
           <div>
-            <span className="inline-flex rounded-full border border-[rgba(29,28,25,0.08)] bg-[rgba(255,250,242,0.82)] px-4 py-2 text-xs uppercase tracking-[0.24em] text-[var(--muted)] shadow-[0_12px_30px_rgba(45,35,22,0.06)]">
-              Browser-native terminals for Python products
+            <span className="inline-flex rounded-lg border border-[var(--accent)] bg-[rgba(0,255,136,0.1)] px-4 py-2 text-xs uppercase tracking-widest text-[var(--accent)] font-mono shadow-[var(--shadow-glow)]">
+              ▶ Run Python directly in your browser
             </span>
 
             <h1
-              className="mt-6 max-w-3xl text-5xl leading-[0.95] sm:text-6xl lg:text-7xl"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="mt-6 max-w-3xl text-5xl leading-[0.95] sm:text-6xl lg:text-7xl font-bold text-[var(--ink)]"
             >
-              A web terminal that looks product-grade and behaves like an actual tool.
+              Execute Real Python Code.<br/>
+              <span className="text-[var(--accent)]">Instantly</span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] sm:text-xl">
-              Try Kevin CLI right here in your browser, or download the standalone Windows app for the full
-              developer toolkit. The same Python engine powers both experiences.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--ink-secondary)] sm:text-xl">
+              PyShell brings a production-grade Python CLI to your browser. No installation required. Test commands, run scripts, and download the Windows desktop app for full system access.
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <a
-                className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-4 text-sm font-semibold text-white transition hover:bg-[#d45d21]"
+                className="inline-flex items-center justify-center rounded-lg bg-[var(--accent)] px-7 py-4 text-sm font-semibold text-[var(--page)] transition hover:bg-[#00e67e] hover:shadow-[var(--shadow-glow)]"
                 href="#demo"
               >
-                Try it in your browser
+                ▶ Try Terminal Now
               </a>
               <a
-                className="inline-flex items-center justify-center rounded-full border border-[rgba(29,28,25,0.1)] bg-[rgba(255,250,242,0.72)] px-7 py-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-[rgba(255,255,255,0.92)]"
+                className="inline-flex items-center justify-center rounded-lg border border-[var(--accent)] bg-[rgba(0,255,136,0.05)] px-7 py-4 text-sm font-semibold text-[var(--accent)] transition hover:bg-[rgba(0,255,136,0.15)] hover:shadow-[var(--shadow-glow)]"
                 href="#start"
               >
-                Download for Windows
+                ↓ Download for Windows
               </a>
             </div>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               {[
-                "Real Python via Pyodide",
-                "Standalone Windows executable",
-                "Temporary browser playground",
+                "✓ Real Python via Pyodide",
+                "✓ Standalone Windows CLI",
+                "✓ No installation needed",
               ].map((item) => (
                 <div
                   key={item}
-                  className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-[rgba(255,250,242,0.64)] px-4 py-3 text-sm text-[var(--muted)] shadow-[0_12px_30px_rgba(45,35,22,0.05)]"
+                  className="rounded-lg border border-[var(--border-dark)] bg-[rgba(0,255,136,0.08)] px-4 py-3 text-sm text-[var(--ink-secondary)] hover:border-[var(--accent)] transition"
                 >
                   {item}
                 </div>
@@ -170,35 +186,35 @@ export default function App() {
           </div>
 
           <div id="demo" className="space-y-4">
-            <div className="glass-panel rounded-[32px] p-4 sm:p-5">
+            <div className="glass-panel rounded-lg p-6 sm:p-8 border border-[var(--accent)]">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">
-                    Interactive prototype
+                  <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
+                    {"> Interactive Terminal"}
                   </p>
-                  <p className="mt-1 text-xl font-semibold text-[var(--ink)]">
-                    Your CLI, running in the browser
+                  <p className="mt-2 text-xl font-semibold text-[var(--ink)]">
+                    Python CLI in Your Browser
                   </p>
                 </div>
-                <div className="rounded-full border border-[rgba(29,28,25,0.08)] bg-white/50 px-3 py-1 text-xs font-medium text-[var(--muted)]">
-                  Python / WebAssembly
+                <div className="rounded-lg border border-[var(--accent)] bg-[rgba(0,255,136,0.1)] px-3 py-1 text-xs font-semibold text-[var(--accent)] font-mono">
+                  Python / WASM
                 </div>
               </div>
 
               <CLIDemo />
 
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-white/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Execution</p>
-                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Browser and desktop</p>
+                <div className="rounded-lg border border-[var(--border-dark)] bg-[rgba(0,255,136,0.08)] p-4 hover:border-[var(--accent)] transition">
+                  <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">Execution</p>
+                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Browser & Desktop</p>
                 </div>
-                <div className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-white/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Filesystem</p>
-                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Temporary browser files</p>
+                <div className="rounded-lg border border-[var(--border-dark)] bg-[rgba(0,255,136,0.08)] p-4 hover:border-[var(--accent)] transition">
+                  <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">Filesystem</p>
+                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">Temp Browser Files</p>
                 </div>
-                <div className="rounded-2xl border border-[rgba(29,28,25,0.08)] bg-white/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Command UX</p>
-                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">History, aliases, variables</p>
+                <div className="rounded-lg border border-[var(--border-dark)] bg-[rgba(0,255,136,0.08)] p-4 hover:border-[var(--accent)] transition">
+                  <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">Command UX</p>
+                  <p className="mt-2 text-base font-semibold text-[var(--ink)]">History, Aliases, Vars</p>
                 </div>
               </div>
             </div>
@@ -209,15 +225,14 @@ export default function App() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="glass-panel rounded-[26px] px-6 py-5"
+              className="glass-panel rounded-lg px-6 py-5 hover:border-[var(--accent)] transition hover:shadow-[var(--shadow-glow)]"
             >
               <p
-                className="text-4xl text-[var(--ink)] sm:text-5xl"
-                style={{ fontFamily: "var(--font-display)" }}
+                className="text-4xl text-[var(--accent)] sm:text-5xl font-bold font-mono"
               >
                 {stat.value}
               </p>
-              <p className="mt-2 text-sm uppercase tracking-[0.18em] text-[var(--muted)]">
+              <p className="mt-2 text-xs uppercase tracking-widest text-[var(--ink-secondary)]">
                 {stat.label}
               </p>
             </div>
@@ -226,14 +241,13 @@ export default function App() {
 
         <section id="features" className="py-18 sm:py-24">
           <div className="max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">
-              Features
+            <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
+              ◆ Features
             </p>
             <h2
-              className="mt-3 text-4xl leading-tight sm:text-5xl"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="mt-3 text-4xl leading-tight sm:text-5xl font-bold text-[var(--ink)]"
             >
-              Built for teams that want terminal power without shipping a terminal aesthetic from 2008.
+              Everything you need for a production CLI.
             </h2>
           </div>
 
@@ -241,53 +255,50 @@ export default function App() {
             {featureCards.map((feature, index) => (
               <article
                 key={feature.title}
-                className="glass-panel rounded-[30px] p-7 transition hover:-translate-y-1"
+                className="glass-panel rounded-lg p-7 transition hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[var(--shadow-glow)]"
               >
-                <span className="inline-flex rounded-full bg-[rgba(29,28,25,0.06)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
+                <span className="inline-flex rounded-lg bg-[rgba(0,255,136,0.1)] px-3 py-1 text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
                   {feature.eyebrow}
                 </span>
                 <div className="mt-5 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/75 text-sm font-semibold text-[var(--ink)]">
-                    0{index + 1}
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[rgba(0,255,136,0.1)] border border-[var(--accent)] text-sm font-semibold text-[var(--accent)] font-mono">
+                    {index + 1}
                   </div>
                   <h3 className="text-2xl font-semibold text-[var(--ink)]">{feature.title}</h3>
                 </div>
-                <p className="mt-5 text-base leading-8 text-[var(--muted)]">{feature.copy}</p>
+                <p className="mt-5 text-base leading-8 text-[var(--ink-secondary)]">{feature.copy}</p>
               </article>
             ))}
           </div>
         </section>
 
         <section id="workflow" className="grid gap-8 py-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="glass-panel rounded-[32px] p-8 sm:p-10">
-            <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">
-              Workflow
+          <div className="glass-panel rounded-lg p-8 sm:p-10 border border-[var(--accent)]">
+            <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
+              ▶ Workflow
             </p>
             <h2
-              className="mt-4 text-4xl leading-tight sm:text-5xl"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="mt-4 text-4xl leading-tight sm:text-5xl font-bold text-[var(--ink)]"
             >
-              Design the shell once, then move it from prototype to production.
+              From Browser Prototype to Desktop Power.
             </h2>
-            <p className="mt-5 text-lg leading-8 text-[var(--muted)]">
-              The strongest terminal products do not stop at command execution. They frame actions, explain state,
-              and make output reusable.
+            <p className="mt-5 text-lg leading-8 text-[var(--ink-secondary)]">
+              PyShell lets you design the shell once. Try it in the browser. Then deploy the same CLI to Windows desktop for full system access.
             </p>
           </div>
 
           <div className="space-y-4">
             {workflowSteps.map((step) => (
-              <article key={step.id} className="glass-panel rounded-[28px] p-6 sm:p-7">
+              <article key={step.id} className="glass-panel rounded-lg p-6 sm:p-7 border border-[var(--border-dark)] hover:border-[var(--accent)] transition">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                   <span
-                    className="text-4xl leading-none text-[var(--accent)]"
-                    style={{ fontFamily: "var(--font-display)" }}
+                    className="text-4xl leading-none text-[var(--accent)] font-mono font-bold"
                   >
                     {step.id}
                   </span>
                   <div>
                     <h3 className="text-2xl font-semibold text-[var(--ink)]">{step.title}</h3>
-                    <p className="mt-3 text-base leading-8 text-[var(--muted)]">{step.copy}</p>
+                    <p className="mt-3 text-base leading-8 text-[var(--ink-secondary)]">{step.copy}</p>
                   </div>
                 </div>
               </article>
@@ -297,68 +308,65 @@ export default function App() {
 
         <section className="py-18 sm:py-24">
           <div className="mb-8 max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">
-              Where it fits
+            <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
+              ◆ Use Cases
             </p>
             <h2
-              className="mt-3 text-4xl leading-tight sm:text-5xl"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="mt-3 text-4xl leading-tight sm:text-5xl font-bold text-[var(--ink)]"
             >
-              Useful in products, not only in developer demos.
+              Built for real-world applications.
             </h2>
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
             {audienceCards.map((card) => (
-              <article key={card.title} className="glass-panel rounded-[30px] p-7">
+              <article key={card.title} className="glass-panel rounded-lg p-7 border border-[var(--border-dark)] hover:border-[var(--accent)] transition hover:shadow-[var(--shadow-glow)]">
                 <h3 className="text-2xl font-semibold text-[var(--ink)]">{card.title}</h3>
-                <p className="mt-4 text-base leading-8 text-[var(--muted)]">{card.copy}</p>
+                <p className="mt-4 text-base leading-8 text-[var(--ink-secondary)]">{card.copy}</p>
               </article>
             ))}
           </div>
         </section>
 
         <section id="start" className="py-8">
-          <div className="overflow-hidden rounded-[36px] border border-[rgba(29,28,25,0.08)] bg-[linear-gradient(135deg,#fff3e0_0%,#f6f0e6_52%,#ecfbf3_100%)] px-6 py-10 shadow-[0_28px_80px_rgba(44,35,22,0.10)] sm:px-10 sm:py-14">
+          <div className="overflow-hidden rounded-lg border border-[var(--accent)] bg-[linear-gradient(135deg,rgba(0,255,136,0.05)_0%,rgba(0,217,255,0.03)_100%)] px-6 py-10 shadow-[var(--shadow-glow)] sm:px-10 sm:py-14">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">
-                  Desktop download
+                <p className="text-xs uppercase tracking-widest text-[var(--accent)] font-mono">
+                  ↓ Download
                 </p>
                 <h2
-                  className="mt-3 max-w-2xl text-4xl leading-tight sm:text-5xl"
-                  style={{ fontFamily: "var(--font-display)" }}
+                  className="mt-3 max-w-2xl text-4xl leading-tight sm:text-5xl font-bold text-[var(--ink)]"
                 >
-                  Keep the full toolkit on your Windows desktop.
+                  Get PyShell for Windows.
                 </h2>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-                  Download Kevin CLI for Windows x64, then run the executable from PowerShell or Windows Terminal.
-                  No Python installation required. This prototype build is unsigned, so Windows may display a SmartScreen warning.
-                  Managed devices may block unsigned apps. Only run downloads you trust.
+                <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--ink-secondary)]">
+                  Download PyShell for Windows x64 and run it from PowerShell or Terminal.
+                  No Python installation required. Execute commands directly on your system with full filesystem access.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:min-w-[220px]">
                 <a
-                  className="inline-flex items-center justify-center rounded-full bg-[var(--ink)] px-7 py-4 text-sm font-semibold text-[var(--page)] transition hover:bg-[#2b241d]"
+                  className="inline-flex items-center justify-center rounded-lg bg-[var(--accent)] px-7 py-4 text-sm font-semibold text-[var(--page)] transition hover:bg-[#00e67e] hover:shadow-[var(--shadow-glow)]"
                   href={__CLI_DOWNLOAD_AVAILABLE__ ? downloadUrl : undefined}
-                  download={__CLI_DOWNLOAD_AVAILABLE__ ? "kevin-cli-windows.exe" : undefined}
+                  download={__CLI_DOWNLOAD_AVAILABLE__ ? "pyshell-windows.exe" : undefined}
                   aria-disabled={!__CLI_DOWNLOAD_AVAILABLE__}
                 >
-                  {__CLI_DOWNLOAD_AVAILABLE__ ? "Download Windows CLI (.exe)" : "Windows build not available"}
+                  {__CLI_DOWNLOAD_AVAILABLE__ ? "↓ Download (.exe)" : "Build in progress..."}
                 </a>
                 <a
-                  className="inline-flex items-center justify-center rounded-full border border-[rgba(29,28,25,0.12)] bg-white/70 px-7 py-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-white"
+                  className="inline-flex items-center justify-center rounded-lg border border-[var(--accent)] bg-[rgba(0,255,136,0.08)] px-7 py-4 text-sm font-semibold text-[var(--accent)] transition hover:bg-[rgba(0,255,136,0.15)] hover:shadow-[var(--shadow-glow)]"
                   href="#demo"
                 >
-                  Try the browser demo
+                  ▶ Try Browser Demo
                 </a>
                 {__CLI_DOWNLOAD_AVAILABLE__ ? (
-                  <a className="text-center text-sm underline" href={`${import.meta.env.BASE_URL}downloads/manifest.json`}>
-                    Download size and SHA-256 checksum
+                  <a className="text-center text-sm text-[var(--accent)] hover:underline" href={`${import.meta.env.BASE_URL}downloads/manifest.json`}>
+                    SHA-256 & Details
                   </a>
                 ) : (
-                  <p className="text-sm text-[var(--muted)]">Build the Windows executable first; see the project README.</p>
+                  <p className="text-sm text-[var(--ink-secondary)]">See project README to build locally.</p>
                 )}
               </div>
             </div>
@@ -366,17 +374,17 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="relative mx-auto max-w-7xl px-6 py-10 text-sm text-[var(--muted)] sm:px-8 lg:px-10">
-        <div className="flex flex-col gap-4 border-t border-[rgba(29,28,25,0.08)] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Py Terminal. Browser-native command experiences.</p>
+      <footer className="relative mx-auto max-w-7xl px-6 py-10 text-sm text-[var(--ink-secondary)] sm:px-8 lg:px-10">
+        <div className="flex flex-col gap-4 border-t border-[var(--border-dark)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} PyShell. <span className="text-[var(--accent)]">▶</span> Cloud Python in your browser.</p>
           <div className="flex flex-wrap gap-5">
-            <a className="transition hover:text-[var(--ink)]" href="#features">
-              Product
+            <a className="transition hover:text-[var(--accent)]" href="#features">
+              Features
             </a>
-            <a className="transition hover:text-[var(--ink)]" href="#workflow">
+            <a className="transition hover:text-[var(--accent)]" href="#workflow">
               Workflow
             </a>
-            <a className="transition hover:text-[var(--ink)]" href="#start">
+            <a className="transition hover:text-[var(--accent)]" href="#start">
               Download
             </a>
           </div>
